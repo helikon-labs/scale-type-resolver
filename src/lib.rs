@@ -98,7 +98,7 @@ pub trait ResolvedTypeVisitor<'resolver>: Sized {
 
     /// Called when the type ID corresponds to a variant type. This is provided the list of
     /// variants (and for each variant, the fields within it) that the type could be encoded as.
-    fn visit_variant<Path, Fields, Var>(self, _path: Path, _variants: Var) -> Self::Value
+    fn visit_variant<Path, Fields, Var>(self, _path: Path, _type_id: Self::TypeId, _variants: Var) -> Self::Value
     where
         Path: PathIter<'resolver>,
         Fields: FieldIter<'resolver, Self::TypeId>,

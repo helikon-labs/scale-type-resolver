@@ -76,7 +76,7 @@ impl TypeResolver for PortableRegistry {
                 visitor.visit_composite(path_iter, iter_fields(&composite.fields))
             }
             scale_info::TypeDef::Variant(variant) => {
-                visitor.visit_variant(path_iter, iter_variants(&variant.variants))
+                visitor.visit_variant(path_iter, type_id, iter_variants(&variant.variants))
             }
             scale_info::TypeDef::Sequence(seq) => {
                 visitor.visit_sequence(path_iter, seq.type_param.id)
@@ -224,7 +224,7 @@ mod test {
                     .collect();
                 ResolvedTypeInfo::CompositeOf(fs)
             })
-            .visit_variant(|_, _, variants| {
+            .visit_variant(|_, _, _, variants| {
                 let vs = variants
                     .map(|v| {
                         let fs: Vec<_> = v

@@ -360,6 +360,7 @@ impl<
         NewVariantFn: FnOnce(
             Context,
             &mut dyn PathIter<'resolver>,
+            TypeId,
             &mut dyn VariantIter<'resolver, ConcreteFieldIter<'resolver, TypeId>>,
         ) -> Output,
     {
@@ -662,6 +663,7 @@ where
     VariantFn: FnOnce(
         Context,
         &mut dyn PathIter<'resolver>,
+        TypeId,
         &mut dyn VariantIter<'resolver, ConcreteFieldIter<'resolver, TypeId>>,
     ) -> Output,
     SequenceFn: FnOnce(Context, &mut dyn PathIter<'resolver>, TypeId) -> Output,
@@ -694,7 +696,7 @@ where
         )
     }
 
-    fn visit_variant<Path, Fields, Var>(self, mut path: Path, variants: Var) -> Self::Value
+    fn visit_variant<Path, Fields, Var>(self, mut path: Path, type_id: Self::TypeId, variants: Var) -> Self::Value
     where
         Path: PathIter<'resolver>,
         Fields: FieldIter<'resolver, Self::TypeId>,
@@ -712,7 +714,7 @@ where
             },
         });
 
-        (self.visit_variant)(self.context, &mut path, &mut var_iter)
+        (self.visit_variant)(self.context, &mut path, type_id, &mut var_iter)
     }
 
     fn visit_sequence<Path>(self, mut path: Path, type_id: Self::TypeId) -> Self::Value
@@ -769,7 +771,7 @@ mod tests {
             .visit_compact(|_, _| 5)
             .visit_not_found(|_| 6)
             .visit_tuple(|_, _| 8)
-            .visit_variant(|_, _, _| 9);
+            .visit_variant(|_, _, _, _| 9);
         // We deliberately don't implement all methods to prove that
         // type inference works regardless:
         // .visit_primitive(|_,_| 7)
